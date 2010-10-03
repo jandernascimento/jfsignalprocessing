@@ -129,6 +129,10 @@ public class Signal extends GeneralSignal {
     resultSignal.settName("Random Signal");
 
     // Write your code here
+    for(int i=0;i<=nbElements;i++){
+        double randomValue=min+Math.random()*max;
+        resultSignal.addElement(i, randomValue);
+    }
 
     return resultSignal;
   }
