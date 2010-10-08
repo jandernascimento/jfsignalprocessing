@@ -5,12 +5,10 @@
 package lab;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import org.jfree.util.ArrayUtilities;
 
 /**
  *
- * @author your name
+ * @author Raquel & Jander
  */
 public class Signal extends GeneralSignal {
 
@@ -90,32 +88,23 @@ public class Signal extends GeneralSignal {
    */
   public Signal getHitogram(double intervalLength) {
     Signal histo = new Signal();
-
-    System.out.println("sample"+getNbSamples());
-
-    ArrayList<Double> al=new ArrayList<Double>();
-
-    int nbSamples=this.getNbSamples();
-    for(int i=0;i<nbSamples;i++){
-        al.add(this.getValueOfIndex(i));
-    }
-
-    Double a[]=al.toArray(new Double[al.size()]);
-
-    Arrays.sort(a);
-
-    double b=a[0]+a[a.length-1];
-
-    int total=(int)b/nbSamples;
-
-    System.out.println("----->"+total);
-
     if (intervalLength <= 0.0) {
       System.out.println("Error in computeHistogram method from Signal:\n The length of an interval must be strictly positive.\n");
       return null;
     }
 
     // Write your code here
+    int cont; 
+    for (double valor = this.getMin(); valor<=this.getMax(); valor=valor+intervalLength){
+        cont=0;
+        for (int j=0; j<=this.getNbSamples()-1;j++){
+            if ((this.getValueOfIndex(j)>=valor) && (this.getValueOfIndex(j)<valor+intervalLength)){
+                cont++;
+            }
+        }
+
+        histo.addElement(valor + (intervalLength/2), cont);
+    }
 
     return histo;
   }
@@ -154,10 +143,18 @@ public class Signal extends GeneralSignal {
     ArrayList<GeneralSignal> list = new ArrayList<GeneralSignal>();
 
     // Write your code here
-    Signal signal = new Signal();
-    list.add(signal);
-
-
+    double x,y;
+   
+    for(int i=0;i<=this.getNbSamples()-1;i++){
+        x=this.getAbscissaOfIndex(i);
+        y=this.getValueOfIndex(i); //returns the y value of the index
+        Signal signal = new Signal();
+        signal.addElement(x - 1, 0);
+        signal.addElement(x, y);
+        signal.addElement(x+1, 0);
+        list.add(signal);
+    }
+    
     return list;
   }
 
@@ -170,6 +167,17 @@ public class Signal extends GeneralSignal {
     ArrayList<GeneralSignal> list = new ArrayList<GeneralSignal>();
 
     // Write your code here
+    double x,y;
+
+    for(int i=0;i<=this.getNbSamples()-1;i++){
+        x=this.getAbscissaOfIndex(i);
+        y=this.getValueOfIndex(i); //returns the y value of the index
+        Signal signal = new Signal();
+        signal.addElement(x - 1, 0);
+        signal.addElement(x, y);
+        signal.addElement(x+1, y);
+        list.add(signal);
+    }
 
     return list;
   }
@@ -182,6 +190,22 @@ public class Signal extends GeneralSignal {
     ArrayList<GeneralSignal> list = new ArrayList<GeneralSignal>();
 
     // Write your code here
+    double x,y;
+    int n_ele = this.getNbSamples();
+   
+    Signal even_signal = new Signal();
+    Signal odd_signal = new Signal();
+
+    for(int i=0;i<=this.getNbSamples()-1;i++){
+        x=this.getAbscissaOfIndex(i);
+        y=this.getValueOfIndex(i); //returns the y value of the index
+
+        //System.out.println("n "+i+"=> x:"+x+" x(n):"+y+" N:"+n_ele+" y[N-n]:"+this.getValueOfIndex(n_ele-1-i));
+        even_signal.addElement(x, (y + this.getValueOfIndex(n_ele-1-i))/2);
+        odd_signal.addElement(x, (y - this.getValueOfIndex(n_ele-1-i))/2);
+    }
+    list.add(even_signal);
+    list.add(odd_signal);
 
     return list;
   }
@@ -194,6 +218,27 @@ public class Signal extends GeneralSignal {
     ArrayList<GeneralSignal> list = new ArrayList<GeneralSignal>();
 
     // Write your code here
+    double x,y;
+
+    Signal even_signal = new Signal();
+    Signal odd_signal = new Signal();
+
+    for(int i=0;i<=this.getNbSamples()-1;i++){
+        x=this.getAbscissaOfIndex(i);
+        y=this.getValueOfIndex(i); //returns the y value of the index       
+
+        if ((x % 2) == 0){ //then it is even
+            even_signal.addElement(x, y);
+            odd_signal.addElement(x, 0);
+        }
+        else{
+            even_signal.addElement(x, 0);
+            odd_signal.addElement(x, y);
+        }
+        
+    }
+    list.add(even_signal);
+    list.add(odd_signal);
 
     return list;
   }
