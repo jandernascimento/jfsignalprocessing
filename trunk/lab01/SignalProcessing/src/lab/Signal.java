@@ -145,13 +145,18 @@ public class Signal extends GeneralSignal {
     // Write your code here
     double x,y;
    
-    for(int i=0;i<=this.getNbSamples()-1;i++){
-        x=this.getAbscissaOfIndex(i);
-        y=this.getValueOfIndex(i); //returns the y value of the index
+    for(int n=0;n<=this.getNbSamples()-1;n++){
+        x=this.getAbscissaOfIndex(n);
+        y=this.getValueOfIndex(n); //returns the y value of the index
         Signal signal = new Signal();
-        signal.addElement(x - 1, 0);
-        signal.addElement(x, y);
-        signal.addElement(x+1, 0);
+        for (int k=0;k<=this.getNbSamples();k++){
+            if(k==n){
+                signal.addElement(k, y);
+            }
+            else{
+                signal.addElement(k, 0);
+            }
+        }
         list.add(signal);
     }
     
@@ -160,7 +165,7 @@ public class Signal extends GeneralSignal {
 
   /**
    * Given the number of samples <i>nbSamples</i> (nbSamples = this.getNbSamples()) of the
-   * current signal, decomposes the signal in <i>nbSamples</i> <b>step</b> component singals.
+   * current signal, decomposes the signal in <i>nbSamples</i> <b>step</b> component signals.
    * @return an ArrayList containing nbSamples step component signals.
    */
   public ArrayList<GeneralSignal> stepDecomposition() {
@@ -168,17 +173,28 @@ public class Signal extends GeneralSignal {
 
     // Write your code here
     double x,y;
+    int prior;
 
-    for(int i=0;i<=this.getNbSamples()-1;i++){
-        x=this.getAbscissaOfIndex(i);
-        y=this.getValueOfIndex(i); //returns the y value of the index
+    for(int n=0;n<=this.getNbSamples()-1;n++){
+        x=this.getAbscissaOfIndex(n);
+        y=this.getValueOfIndex(n); 
         Signal signal = new Signal();
-        signal.addElement(x - 1, 0);
-        signal.addElement(x, y);
-        signal.addElement(x+1, y);
+        for(int k=0;k<=this.getNbSamples()-1;k++){
+            if (k<n){
+                signal.addElement(k, 0);                
+            }
+            else{
+                if (n==0){
+                    signal.addElement(k, y);
+                }
+                else{
+                    prior=(int) (y-this.getValueOfIndex((int) x-1));
+                    signal.addElement(k, prior);                 
+                }
+            }         
+        }
         list.add(signal);
-    }
-
+      }  
     return list;
   }
 
@@ -198,9 +214,8 @@ public class Signal extends GeneralSignal {
 
     for(int i=0;i<=this.getNbSamples()-1;i++){
         x=this.getAbscissaOfIndex(i);
-        y=this.getValueOfIndex(i); //returns the y value of the index
+        y=this.getValueOfIndex(i);
 
-        //System.out.println("n "+i+"=> x:"+x+" x(n):"+y+" N:"+n_ele+" y[N-n]:"+this.getValueOfIndex(n_ele-1-i));
         even_signal.addElement(x, (y + this.getValueOfIndex(n_ele-1-i))/2);
         odd_signal.addElement(x, (y - this.getValueOfIndex(n_ele-1-i))/2);
     }
@@ -225,7 +240,7 @@ public class Signal extends GeneralSignal {
 
     for(int i=0;i<=this.getNbSamples()-1;i++){
         x=this.getAbscissaOfIndex(i);
-        y=this.getValueOfIndex(i); //returns the y value of the index       
+        y=this.getValueOfIndex(i); 
 
         if ((x % 2) == 0){ //then it is even
             even_signal.addElement(x, y);
