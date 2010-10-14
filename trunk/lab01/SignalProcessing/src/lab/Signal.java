@@ -344,8 +344,15 @@ public class Signal extends GeneralSignal {
   public Signal singlePolLowPassFilter() {
     Signal result = new Signal();
     result.settName("Filtered signal");
-
     // Write your code here
+    for(int n=0;n<getNbSamples();n++){
+ 
+        double yOfNMinusOne=result.getValueOfIndex(n-1);
+        double xOfN=result.getAbscissaOfIndex(n);
+        result.addElement(n, 0.05*xOfN+0.95*yOfNMinusOne);
+        
+    }
+    //end of my code
 
     return result;
   }
