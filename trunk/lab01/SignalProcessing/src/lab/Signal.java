@@ -33,13 +33,11 @@ public class Signal extends GeneralSignal {
     int nbSamples = this.getNbSamples();
     double mean = 0.0;
 
-    double totalSum=0.0d;
-    for(int i=0;i<nbSamples;i++){
-        totalSum+=this.getValueOfIndex(i);
-    }
-
-    mean=totalSum/nbSamples;
-    // Write your code here // DONE
+    // Write your code here
+    for(int i=0;i<=this.getNbSamples()-1;i++)
+        mean = mean+this.getValueOfIndex(i);
+    mean=mean/this.getNbSamples();
+    
     return mean;
   }
 
@@ -51,18 +49,14 @@ public class Signal extends GeneralSignal {
     int nbSamples = this.getNbSamples();
     double standardDev = 0.0;
 
-    double totalSumVariation=0.0;
-
-    for(int i=0;i<nbSamples;i++){
-        double desviation=this.getMean()-this.getValueOfIndex(i);
-        double squareOfDesviation=desviation*desviation;
-        totalSumVariation+=squareOfDesviation;
+    // Write your code here
+    double variance = 0.0;
+    double mean=this.getMean();
+    for(int i=0;i<=this.getNbSamples()-1;i++){
+        variance=variance + (Math.pow((this.getValueOfIndex(i)-mean),2)); //sum of (the var's power 2)
     }
-
-    totalSumVariation=totalSumVariation/(nbSamples-1);
-    
-    // Write your code here // DONE
-    standardDev=Math.sqrt(totalSumVariation);
+    variance=variance / (this.getNbSamples()-1);
+    standardDev=Math.sqrt(variance);
 
     return standardDev;
   }
@@ -118,11 +112,27 @@ public class Signal extends GeneralSignal {
     resultSignal.settName("Random Signal");
 
     // Write your code here
-    for(int i=0;i<=nbElements;i++){
-        double randomValue=min+Math.random()*max;
-        resultSignal.addElement(i, randomValue);
+    double number, min_number_ger=1, max_number_ger=0, mean, std_dev;
+    if ((min<0)||(max>1)) {
+      System.out.println("Error in createRandomSeries method from Signal:\n The interval min and max must be between 0 and 1.\n");
+      return null;
     }
-
+    for (int i=0;i<=nbElements-1;i++){
+        do{            
+            number=Math.random();                    
+        }while((number<min) || (number>max));
+        if (number<min_number_ger){
+            min_number_ger=number;
+        }
+        if (number>max_number_ger){
+            max_number_ger=number;
+        }       
+        resultSignal.addElement(i, number);
+    }
+    mean=(max_number_ger+min_number_ger)/2;
+    std_dev=(max_number_ger-min_number_ger)/Math.sqrt(12);
+    System.out.println("theoretical mean : "+mean);
+    System.out.println("theoretical standard deviation : "+std_dev);
     return resultSignal;
   }
 
@@ -284,6 +294,9 @@ public class Signal extends GeneralSignal {
     x1.settName("x1[n] = sin(2 Pi n / 100)");
 
     // Write your code here
+    for(int i=0;i<nbSamples;i++){
+    
+    }
 
     return x1;
   }
@@ -337,15 +350,36 @@ public class Signal extends GeneralSignal {
     return result;
   }
 
-  /**
-   * Convolves the current signal with the given kernel
+   /**
+   * Truncates linear convolution of the current signal with the given kernel
+   * (Note: the output signal has the same number of samples
+   *  than the current signal)
    */
-  public Signal convolve(Signal kernel) {
+  public Signal linearConvolve(Signal kernel) {
     Signal result = new Signal();
     result.settName("Convolved signal");
+    int nbSamples = this.getNbSamples();
+    int kernelSize = kernel.getNbSamples();
 
     // Write your code here
 
     return result;
   }
+
+ /**
+   * Circular convolve the current signal with the given kernel
+   * (Note: the output signal has the same number of samples
+   *  than the current signal)
+   */
+  public Signal circularConvolve(Signal kernel) {
+    Signal result = new Signal();
+
+    result.settName("Convolved signal");
+    int nbSamples = this.getNbSamples();
+    int kernelSize = kernel.getNbSamples();
+
+    // Write your code here
+    return result;
+  }
+
 }
