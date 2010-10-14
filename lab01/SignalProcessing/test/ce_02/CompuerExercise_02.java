@@ -13,7 +13,7 @@ import utils.KeyboardIO;
  *
  * @author cfouard
  */
-public class CompuerExercise_02 {
+public class ComputerExercise_02 {
 
   /**
    * @param args the command line arguments
@@ -23,9 +23,9 @@ public class CompuerExercise_02 {
 
     String menuMsg = "\n------------------------------------------------------------\n";
     menuMsg += " Main Menu:                                                 \n";
-    menuMsg += "    1: Test signal decomposition                            \n";
-    menuMsg += "    2: Test recursive filter                                \n";
-    menuMsg += "    3: Test convolution                                     \n";
+    menuMsg += "    1: Test recursive filter                                \n";
+    menuMsg += "    2: Test linear   convolution                            \n";
+    menuMsg += "    3: Test circular convolution                            \n";
     menuMsg += "                                                            \n";
     menuMsg += "    9: Exit                                                 \n";
     menuMsg += " Please choose a number between 1 and 9                     \n";
@@ -45,13 +45,11 @@ public class CompuerExercise_02 {
       int nbElements = 0;
       String msg = null;
       ArrayList<GeneralSignal> list;
+      GeneralSignal sum;
 
       switch (choice) {
+
         case 1:
-
-          break;
-
-        case 2:
           Signal x1 = null;
           Signal x2 = null;
           Signal x3 = null;
@@ -60,6 +58,7 @@ public class CompuerExercise_02 {
           msg += " Sub  Menu:                                                 \n";
           msg += "    1: Generate x1, x2, x3, gaussian noise and sums         \n";
           msg += "    2: Apply signlePolLowPassFilter to a signal             \n";
+          msg += "    3: Sum several signals                                  \n";
           msg += "                                                            \n";
           msg += "    9: Back to main menu                                    \n";
           msg += " Please choose a number between 1 and 9                     \n";
@@ -80,7 +79,7 @@ public class CompuerExercise_02 {
                 list.add(x2);
                 list.add(x3);
 
-                GeneralSignal sum = GeneralSignal.sumSignals(list);
+                sum = GeneralSignal.sumSignals(list);
                 sum.displayWithOtherSignals(list, "Generated signal", false);
 
                 list.add(x4);
@@ -132,17 +131,35 @@ public class CompuerExercise_02 {
               default:
                 System.out.println("I do not understand your choice, sorry...\n");
                 break;
+                
+              case 3:
+                int nbSingals = KeyboardIO.readInteger("Please enter the number of signals you want to sum\n");
+
+                list = new ArrayList<GeneralSignal>();
+                for(int i = 0; i < nbSingals; i++) {
+                  filename = KeyboardIO.readString("Please enter the signal number " + (i+1) + " file name.\n");
+                  signal = new Signal(filename);
+                  list.add(signal);
+                }
+
+                sum = GeneralSignal.sumSignals(list);
+                sum.displayWithOtherSignals(list, "Generated signal", false);
+                if (KeyboardIO.readYesNo("Do you want to save the result signal?\n")) {
+                  outputFilename = KeyboardIO.readString("Please enter the name of the output file.\n");
+                  sum.save(outputFilename);
+                }
+                
             }
           }
 
           break;
 
-        case 3:
+        case 2:
           filename = KeyboardIO.readString("Please enter the name of the signal file.\n");
           kernelFilename = KeyboardIO.readString("Please enter the name of the kernel file\n");
           signal = new Signal(filename);
           kernel = new Signal(kernelFilename);
-          filteredSignal = signal.convolve(kernel);
+          filteredSignal = signal.linearConvolve(kernel);
           list = new ArrayList<GeneralSignal>();
           list.add(signal);
           filteredSignal.displayWithOtherSignals(list, "Original and filtered signals", false);
@@ -153,6 +170,24 @@ public class CompuerExercise_02 {
           }
           
           break;
+
+        case 3:
+          filename = KeyboardIO.readString("Please enter the name of the signal file.\n");
+          kernelFilename = KeyboardIO.readString("Please enter the name of the kernel file\n");
+          signal = new Signal(filename);
+          kernel = new Signal(kernelFilename);
+          filteredSignal = signal.circularConvolve(kernel);
+          list = new ArrayList<GeneralSignal>();
+          list.add(signal);
+          filteredSignal.displayWithOtherSignals(list, "Original and filtered signals", false);
+
+          if (KeyboardIO.readYesNo("Save filtered signal?\n")) {
+            outputFilename = KeyboardIO.readString("Please enter the name of the output file.\n");
+            filteredSignal.save(outputFilename);
+          }
+
+          break;
+
         case 9:
           System.out.println("Good Bye.");
           break;
