@@ -128,8 +128,18 @@ public class Signal extends GeneralSignal {
 
   public static Signal createGaussianNoiseSeries(int nbElements) {
     Signal resultSignal = new Signal();
-
-    // Write your code here
+    float standardDesviation = 1;
+    float mean = 0;
+    
+    for (int i = 0; i < nbElements; i++) {
+      float rnd1 = (float)Math.random();
+      float rnd2 = (float)Math.random();
+      float ln=(float)-2d*(float)Math.log(rnd1);
+      float sqrtLn=(float)Math.sqrt(ln);
+      float cosRad=(float)2 * (float)Math.PI * rnd2;
+      //based on http://www.dspguru.com/dsp/howtos/how-to-generate-white-gaussian-noise
+      resultSignal.setValueOf(i,sqrtLn*Math.cos(cosRad) * standardDesviation + mean);
+    }
 
     return resultSignal;
   }
