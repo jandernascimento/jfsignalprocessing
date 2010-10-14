@@ -375,10 +375,11 @@ public class Signal extends GeneralSignal {
     Signal result = new Signal();
     result.settName("Filtered signal");
     // Write your code here
-    for(int n=0;n<getNbSamples();n++){
- 
+    result.addElement(0, 0);
+    for(int n=1;n<getNbSamples();n++){
+
         double yOfNMinusOne=result.getValueOfIndex(n-1);
-        double xOfN=result.getAbscissaOfIndex(n);
+        double xOfN=this.getValueOfIndex(n);
         result.addElement(n, 0.05*xOfN+0.95*yOfNMinusOne);
         
     }
