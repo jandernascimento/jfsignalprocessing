@@ -294,8 +294,10 @@ public class Signal extends GeneralSignal {
     x1.settName("x1[n] = sin(2 Pi n / 100)");
 
     // Write your code here
-    for(int i=0;i<nbSamples;i++){
-    
+    double y;
+    for(int i=0;i<nbSamples-1;i++){
+        y=Math.sin((2.0 * Math.PI * i) / 100.0);
+        x1.addElement((double) i, y);
     }
 
     return x1;
@@ -312,6 +314,24 @@ public class Signal extends GeneralSignal {
     x2.settName("x2[n] =  4*exp(-(n-150)^2/300) - exp(-(n-150)^2/2500)");
 
     // Write your code here
+    double part1, part2, y;
+    for(int i=0;i<nbSamples-1;i++){
+        part1=i-150.0;
+        part1=part1 * part1;
+        part1=part1/300.0;
+        part1=part1*(-1);
+        part1=Math.exp(part1);
+        part1=4*part1;
+
+        part2=i-150.0;
+        part2=part2 * part2;
+        part2=part2 / 2500.0;
+        part2=part2*(-1);
+        part2=Math.exp(part2);
+
+        y=part1-part2;
+        x2.addElement((double) i, y);
+    }
 
     return x2;
   }
@@ -329,6 +349,16 @@ public class Signal extends GeneralSignal {
     x3.settName("x3");
 
     // Write your code here
+    double y;
+    for(int i=0;i<nbSamples-1;i++){
+        if (240<i && i<300)
+            y=1;
+        else if(299<i && i<380)
+            y=-2;
+        else
+            y=0;
+        x3.addElement((double) i, y);
+    }
 
     return x3;
   }
