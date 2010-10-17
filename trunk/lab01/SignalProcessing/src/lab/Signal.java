@@ -137,6 +137,7 @@ public class Signal extends GeneralSignal {
   }
 
   public static Signal createGaussianNoiseSeries(int nbElements) {
+      /*our code
     Signal resultSignal = new Signal();
     float standardDesviation = 1;
     float mean = 0;
@@ -151,6 +152,24 @@ public class Signal extends GeneralSignal {
       resultSignal.setValueOf(i,sqrtLn*Math.cos(cosRad) * standardDesviation + mean);
     }
 
+    return resultSignal;*/
+
+
+    //Celine's code
+    double val, random;
+    Signal resultSignal = new Signal();
+    resultSignal.settName("Gaussian Noise");
+    for (int n = 0; n < nbElements; n++) {
+      resultSignal.addElement(n, 0.0);
+      for (int j = 0; j < 12; j++) {
+        val = resultSignal.getValueOfIndex(n);
+        random = Math.random();
+        resultSignal.setValueOf(n, val + random);
+      }
+      val = resultSignal.getValueOfIndex(n);
+      val -= 6;
+      resultSignal.setValueOf(n, val);
+    }
     return resultSignal;
   }
 
