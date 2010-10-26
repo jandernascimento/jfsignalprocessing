@@ -415,10 +415,17 @@ public class Signal extends GeneralSignal {
   public Signal linearConvolve(Signal kernel) {
     Signal result = new Signal();
     result.settName("Convolved signal");
-    int nbSamples = this.getNbSamples();
-    int kernelSize = kernel.getNbSamples();
+    int nbSamples = this.getNbSamples(); //N
+    int kernelSize = kernel.getNbSamples(); //K
 
     // Write your code here
+    for(int n=0;n<=(nbSamples-1);n++){
+        double y=0;
+        for (int k=0;k<=nbSamples-1;k++)
+            if (this.isInSeries(k) && kernel.isInSeries(n-k))
+                y+= (this.getValueOfIndex(k) * kernel.getValueOfIndex(n-k));
+        result.addElement(n, y);
+    }
 
     return result;
   }
@@ -436,6 +443,16 @@ public class Signal extends GeneralSignal {
     int kernelSize = kernel.getNbSamples();
 
     // Write your code here
+    for(int n=0;n<=(nbSamples-1);n++){
+        double y=0;
+        for (double k=-nbSamples/2;k<=nbSamples/2;k++){
+            int aux= (int) ( ( (double) n) - k );
+            if (this.isInSeries(aux) && kernel.isInSeries((int)k))
+                 y+= (this.getValueOfIndex(aux) * kernel.getValueOfIndex((int) k));
+        }               
+        result.addElement(n, y);
+    }
+    
     return result;
   }
 
