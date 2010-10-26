@@ -192,7 +192,7 @@ public class GeneralSignal {
    * @return true if there exists a point of the given abscissa in the signal, false otherwise
    */
   public boolean isInSeries(double abscissa) {
-    return (data.indexOf(abscissa) > 0);
+    return (data.indexOf(abscissa) > -1);
   }
 
   /**
@@ -474,7 +474,7 @@ public class GeneralSignal {
     boolean checkSignalLength = true;
     int signalNumber = 0;
 
-    if (list.isEmpty()) {
+   if (list.isEmpty()) {
       System.out.println("The list is empty, so is the sum of signals...\n");
       return result;
     }
