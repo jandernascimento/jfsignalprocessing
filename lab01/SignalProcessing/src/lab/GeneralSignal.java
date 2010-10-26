@@ -485,10 +485,10 @@ public class GeneralSignal {
       signalNumber++;
     }
 
-    if (!checkSignalLength) {
+    /*if (!checkSignalLength) {
       System.out.println("The signals do not all have the same length. I cannot perform a sum");
       return result;
-    }
+    }*/
 
     for (int i = 0; i < length; i++) {
       signalNumber = 0;
