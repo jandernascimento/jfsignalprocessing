@@ -420,7 +420,7 @@ public class Signal extends GeneralSignal {
 
     // Write your code here
     for(int n=0;n<=nbSamples-1;n++){
-        double y=0;
+        double y=0.0;
         for (int k=0;k<=kernelSize-1;k++)
             if (this.isInSeries(k) && kernel.isInSeries(n-k))
                 y+= (this.getValueOfIndex(k) * kernel.getValueOfIndex(n-k));
@@ -443,17 +443,115 @@ public class Signal extends GeneralSignal {
     int kernelSize = kernel.getNbSamples();
 
     // Write your code here
+    //to swap the kernel
+    Signal kernel2 = new Signal();
+    for(int n=0;n<=kernelSize-1;n++)
+        kernel2.addElement(n, kernel.getValueOfIndex(kernelSize-1-n));
+
     for(int n=0;n<=nbSamples-1;n++){
-        double y=0;
-        for (double k=-kernelSize/2;k<=kernelSize/2;k++){
-            int aux= (int) ( ( (double) n) - k );
-            if (this.isInSeries(aux) && kernel.isInSeries((int)k))
-                 y+= (this.getValueOfIndex(aux) * kernel.getValueOfIndex((int) k));
+        double y=0.0;
+        for (int k=0;k<=kernelSize-1;k++){
+
+            int aux= ( n - (kernelSize/2) + k );
+            if (this.isInSeries(aux) && kernel2.isInSeries((int)k))
+                 y+= (this.getValueOfIndex(aux) * kernel2.getValueOfIndex((int) k));
         }               
         result.addElement(n, y);
     }
     
     return result;
   }
+
+  /* ************************************************************************* */
+  /*                                                                           */
+  /*         Computer Exercise number 03                                       */
+  /*                                                                           */
+  /* ************************************************************************* */
+  /**
+   * Computes the Discrete Fourier Transform of the current signal
+   * @return DFT of the current signal (as ComplexSignal)
+   */
+  public ComplexSignal dft() {
+    ComplexSignal result = new ComplexSignal();
+    int nbSamples = this.getNbSamples();
+
+    // Write your code here
+
+    return result;
+  }
+
+  /**
+   * Computes the Inverse Discrete Fourier Transform of the complex signal given
+   * in parameters.<br/>
+   * Note: this method should be in ComplexSignal, but for simplicity matters you
+   * will not have to modify the class ComplexSignal, so you implement a static
+   * method in Signal instead.
+   * Note II: Compute the idft with complex number. At the end, take the real
+   *   part of your result signal.
+   * @param fourier input Fourier transform of the signal
+   * @return the inverse Fourier transform of the input complex signal
+   */
+  public static Signal idft(ComplexSignal fourier) {
+    ComplexSignal result = new ComplexSignal();
+    int nbSamples = fourier.getNbSamples();
+
+    // Write your code here
+
+    return result.getRealSignal();
+  }
+
+  /**
+   * Generates a &delta; signal
+   * @param nonZeroSampleNumber number of the sample which value equals 1
+   * @param numberOfSamples total number of samples of the result signal
+   * @return Delta signal
+   */
+  public static Signal generateDelta(int nonZeroSampleNumber, int numberOfSamples) {
+    Signal signal = new Signal();
+    signal.settName("Delta_" + nonZeroSampleNumber);
+
+    // Write your code here
+
+    return signal;
+  }
+
+  /**
+   * Generate a Rectangular signal of numberOfSamples samples:
+   *  before firstNonZeroSample, and after lastNonZeroSample, sample values are 0.0
+   *  between firstNonZeroSample and lastNonZeroSample included, sample values are 1.0
+   * @param firstNonZeroSample index of the first non zero sample
+   * @param lastNonZeroSample index of the last non zero sample
+   * @param numberOfSamples number of samples of the signal
+   */
+  public static Signal generateRectangle(int firstNonZeroSample, int lastNonZeroSample, int numberOfSamples) {
+    Signal signal = new Signal();
+    signal.settName("Rectangle_" + firstNonZeroSample + "_" + lastNonZeroSample);
+
+    // Write your code here
+
+    return signal;
+  }
+
+  /**
+   * Compute a complex signal where for each sample (of index n)
+   * - the magnitude is
+   *     - m if n=0
+   *     - if n>0: sinc_m[n] = sin(2.pi.n/N . (m+1/2)) / sin(pi.n/N)
+   *        (where N is the number of samples (numberOfSamples parameter))
+   *
+   * - the phase is 0
+   *
+   * @param numberOfSamples number of samples of the signal (N in the equation above)
+   * @param m (as defined in the subject)
+   * @return
+   */
+  public static ComplexSignal generateComplexSinc(int numberOfSamples, int m) {
+    ComplexSignal signal = new ComplexSignal();
+
+    // Write your code here
+
+    return signal;
+  }
+
 
 }
