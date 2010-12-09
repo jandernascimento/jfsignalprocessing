@@ -63,7 +63,7 @@ public class Image {
   public Image(int width, int height) {
     this.width = width;
     this.height = height;
-    this.image = new char[height][width];
+    this.image = new char[height][width]; 
   }
 
   public void fill(char val) {
@@ -170,23 +170,21 @@ public class Image {
    * @return the sub-sampled image
    */
   public Image subSamples(int factor) {
-    int newWidth = this.width / factor;
-    int newHeight = this.height / factor;
-    Image newImg = new Image(newWidth, newHeight);
+        int newWidth = this.width / factor;
+        int newHeight = this.height / factor;
+        Image newImg = new Image(newWidth, newHeight);
 
-    
-    for(int i=0;i<newHeight;i++){
-     
-        for(int j=0;j<newWidth;j++){
-        
-            newImg.image[i][j]=image[i*factor][j*factor];
-        
-        }
-        
+        // Please write your code here...
+
+        for (int j = 0; j < newHeight; j++) 
+            for (int i = 0; i < newWidth; i++) {
+                if ((j * factor < this.height) && (i * factor < this.width)) 
+                    newImg.image[j][i] = this.image[j * factor][i * factor];
+                else 
+                    newImg.image[j][i] = (char) 0;                
+            }
+        return newImg;
     }
-
-    return newImg;
-  }
 
   /**
    *
@@ -197,18 +195,20 @@ public class Image {
    *
    * @return a 1D signal with double values corresponding to grey levels.
    */
-  public Signal getAsSignal() {
-    Signal signal = new Signal();
-    signal.settName("Image");
+   public Signal getAsSignal() {
+        Signal signal = new Signal();
+        signal.settName("Image");
 
-    for(int x=0;x<height;x++){
-        for(int y=0;y<width;y++){
-            signal.addElement(x*width+y, image[x][y]);
-        }
+        // Please write your code here
+        int k = 0;
+        for(int j=0; j<this.height;j++)
+            for(int i=0;i<this.width;i++)
+            {
+                    signal.addElement(k,this.image[j][i]);
+                    k++;
+            }
+        return signal;
     }
-
-    return signal;
-  }
 
   /**
    * Creates an image from a 1D signal
@@ -221,19 +221,28 @@ public class Image {
     this.height = height;
     this.image = new char[height][width];
 
-    for(int i=0;i<height;i++){
-        for(int j=0;j<width;j++){
-            this.image[i][j]=(char)signal.getValueOfIndex(i*height+j);
-        }
-    }
+    // Please writeyour code here
+    if(signal.getNbSamples() != width*height)
+        System.out.println("The number of samples("+signal.getNbSamples()+") is different of [width("+ width+")*height("+height+")] of the image.");
+    
+    int h=0,w=0;
+    char ch_var;
+    for(int i=0;i<signal.getNbSamples();i++){
+        if (signal.getValueOfIndex(i)<0)
+            ch_var=(char) 0;
+        else if(signal.getValueOfIndex(i)>255)
+            ch_var=(char) 255;
+        else
+            ch_var=(char) Math.round(signal.getValueOfIndex(i));
+            
+        this.image[h][w]=ch_var;
 
-//      int j = -1;
-//        for (int i = 0; i < signal.getNbSamples(); i++) {
-//            if (i % width == 0)
-//                j++;
-//            this.image[j][i % width] = (char)signal.getValueOfIndex(i);
-//        }
-//
+        w++;
+        if (w==width){
+            w=0;
+            h++;
+        }
+      }
   }
 
   /*

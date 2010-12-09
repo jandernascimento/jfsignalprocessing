@@ -4,8 +4,6 @@
  */
 package lab;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 
 /**
@@ -120,15 +118,15 @@ public class Signal extends GeneralSignal {
       return null;
     }
     for (int i=0;i<=nbElements-1;i++){
-        do{            
-            number=Math.random();                    
+        do{
+            number=Math.random();
         }while((number<min) || (number>max));
         if (number<min_number_ger){
             min_number_ger=number;
         }
         if (number>max_number_ger){
             max_number_ger=number;
-        }       
+        } 
         resultSignal.addElement(i, number);
     }
     mean=(max_number_ger+min_number_ger)/2;
@@ -464,7 +462,7 @@ public class Signal extends GeneralSignal {
     return result;
   }
 
-/* ************************************************************************* */
+  /* ************************************************************************* */
   /*                                                                           */
   /*         Computer Exercise number 03                                       */
   /*                                                                           */
@@ -477,21 +475,19 @@ public class Signal extends GeneralSignal {
     ComplexSignal result = new ComplexSignal();
     int nbSamples = this.getNbSamples();
 
-    for(int n=0;n<nbSamples;n++){
-
-        Complex res=new Complex();
-
-        for(int k=0;k<nbSamples;k++){
-
-            res.add(Complex.createFromPolar(this.getValueOfIndex(k),(-2*Math.PI*k*n)/nbSamples ));
-
+    // Write your code here        
+    double teta;
+    for(int n=0;n<=nbSamples-1;n++){
+        Complex c = new Complex();
+        for(int k=0;k<=nbSamples-1;k++){
+            teta=((-1) * 2 * Math.PI * k * n)/nbSamples;
+            c.add(Complex.createFromPolar(this.getValueOfIndex(k), teta));
         }
-        result.add(res);
-
+        result.add(c);
     }
-
     return result;
   }
+
 
   /**
    * Computes the Inverse Discrete Fourier Transform of the complex signal given
@@ -503,32 +499,27 @@ public class Signal extends GeneralSignal {
    *   part of your result signal.
    * @param fourier input Fourier transform of the signal
    * @return the inverse Fourier transform of the input complex signal
-   */
+ */
   public static Signal idft(ComplexSignal fourier) {
     ComplexSignal result = new ComplexSignal();
     int nbSamples = fourier.getNbSamples();
 
     // Write your code here
+    double teta;
+    for(int n=0;n<=nbSamples-1;n++){
+        Complex c1 = new Complex();
+        Complex c2 = new Complex();
+        for(int k=0;k<=nbSamples-1;k++){
+            teta=(2.0 * Math.PI * (double)k * (double)n)/(double)nbSamples;
+            c2=Complex.createFromPolar(1.0, teta);
 
-    for(int n=0;n<nbSamples;n++){
-
-        Complex res=new Complex();
-
-        for(int k=0;k<nbSamples;k++){
-
-            Complex c=fourier.get(k);
-            Complex newpart=Complex.createFromPolar(1.0,(double)(2.0*Math.PI*k*n)/(double)nbSamples);
-            newpart.mul(c);
-            //c.mul();
-            res.add(newpart);
+            c2.mul(fourier.get(k));
+            c1.add(c2);
         }
-        res.multiplyByReal((double)1.0/(double)nbSamples);
-        result.add(res);
-        
-    }
-
-
-    return result.getRealSignal();
+        c1.multiplyByReal((double)1.0/(double)nbSamples);
+        result.add(c1);
+      }
+      return result.getRealSignal();
   }
 
   /**
@@ -541,11 +532,13 @@ public class Signal extends GeneralSignal {
     Signal signal = new Signal();
     signal.settName("Delta_" + nonZeroSampleNumber);
 
-    for(int i=0;i<numberOfSamples;i++){
-        signal.addElement(i,0);
+    // Write your code here
+    for (int n=0; n<=numberOfSamples-1; n++){
+        if (n==nonZeroSampleNumber)
+            signal.addElement(n, 1);
+        else
+            signal.addElement(n, 0);
     }
-    signal.setElement(nonZeroSampleNumber,1);
-
     return signal;
   }
 
@@ -560,11 +553,13 @@ public class Signal extends GeneralSignal {
   public static Signal generateRectangle(int firstNonZeroSample, int lastNonZeroSample, int numberOfSamples) {
     Signal signal = new Signal();
     signal.settName("Rectangle_" + firstNonZeroSample + "_" + lastNonZeroSample);
-    for(int i=0;i<numberOfSamples;i++){
-        if(i<firstNonZeroSample || i>lastNonZeroSample)
-            signal.setValueOf(i,0.0);
+
+    // Write your code here
+    for (int n=0; n<=numberOfSamples-1; n++){
+        if ((n<firstNonZeroSample) || (n>lastNonZeroSample))
+                signal.addElement(n, 0);
         else
-            signal.setValueOf(i,1.0); 
+            signal.addElement(n, 1);
     }
     return signal;
   }
@@ -576,46 +571,54 @@ public class Signal extends GeneralSignal {
    *     - if n>0: sinc_m[n] = sin(2.pi.n/N . (m+1/2)) / sin(pi.n/N)
    *        (where N is the number of samples (numberOfSamples parameter))
    *
-   * - the phase is 0
+   * - the phase is 0n
    *
    * @param numberOfSamples number of samples of the signal (N in the equation above)
    * @param m (as defined in the subject)
    * @return
    */
-  public static ComplexSignal generateComplexSinc(int N, int m) {
+  public static ComplexSignal generateComplexSinc(int numberOfSamples, int m) {
     ComplexSignal signal = new ComplexSignal();
-    final double PHASE=0.0;    
-    for(int n=0;n<N;n++){
-        double magnitude=(double)m;
-        if(n>0){
-            magnitude=Math.sin((2.0*Math.PI*(double)n/(double)N)*((double)m+1.0/2.0))/Math.sin((Math.PI*(double)n)/(double)N);
-        }
 
-        Complex original=Complex.createFromPolar(magnitude,PHASE);
-        
-        /** Question: 3.11 - Doing a proper shift: Begin **/
-        final double SHIFT=-10;
-        Complex shiftingComplex=Complex.createFromPolar(1, (2*Math.PI*n*SHIFT)/N);
-        original.mul(shiftingComplex);
-        /** Doing a proper shift: End **/
+    // Write your code here
+    signal.add(Complex.createFromPolar((double)m, 0.0));
+    for (int n=1; n<=numberOfSamples-1; n++){
+        double mag=Math.sin( (2.0 * Math.PI * (double)n / (double) numberOfSamples) * (((double) m) + 0.5)  );
+        mag = mag / ( Math.sin(Math.PI * (double)n/(double)numberOfSamples) );
+        Complex x;
+        x=Complex.createFromPolar(mag, 0.0);
 
-        signal.add(original);
+        /*Question 3.11*/
+        double SHIFT=-15;
+        Complex x2=Complex.createFromPolar(1, (2*Math.PI*n*SHIFT)/numberOfSamples);
+        x.mul(x2);
+        /*End*/
+
+        signal.add(x);
     }
     return signal;
-   }
+  }
+
 
     /* ************************************************************************* */
   /*                                                                           */
   /*         Computer Exercise number 04                                       */
   /*                                                                           */
   /* ************************************************************************* */
-  public Signal stretchContrast(double newRangeMin, double newRangeMax) {
+   public Signal stretchContrast(double newRangeMin, double newRangeMax) {
     Signal signal = new Signal();
 
     // Please write your code here
-
+    int N = this.getNbSamples();
+    double constant = ( (newRangeMax-newRangeMin)/ (this.getMax()-this.getMin()) );
+    double yk;
+    for(int i=0; i<N;i++){
+            yk = newRangeMin + (constant*(this.getValueOfIndex(i)-this.getMin()) );
+            signal.addElement(i, yk);
+    }
     return signal;
   }
 
-}
 
+
+}
