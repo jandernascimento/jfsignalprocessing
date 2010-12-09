@@ -489,6 +489,42 @@ public class Signal extends GeneralSignal {
   }
 
 
+
+
+
+  public ArrayList <ComplexSignal> question_2_1(){
+      //question 2.1
+      /*ArrayList <ComplexSignal> sinoFT = new ArrayList <ComplexSignal> ();
+
+      ArrayList<Signal> sino = openSinogram("data/sino_phi_s");
+      int nPhi = sino.size();
+      int nS = sino.get(0).getNbSamples();
+     
+      for (int i=0; i<=nPhi-1; i++)          
+            sinoFT.add(sino.get(i).dft());
+      return sinoFT;*/
+
+      //question 2.2
+      ArrayList<ComplexSignal> sinoFiltered = new ArrayList<ComplexSignal>();
+      ArrayList<Signal> sino = openSinogram("data/sino_phi_s");
+      int nPhi = sino.size();
+      int nS = sino.get(0).getNbSamples();
+
+      for (int i=0; i<=nPhi-1; i++){
+            ComplexSignal cs=new ComplexSignal();
+            cs=sino.get(i).dft();
+            for (int j=0; j <= nS-1; j++) {
+                cs.get(j).multiplyByReal(2*Math.PI/nS);
+            }
+            sinoFiltered.add(cs);
+      }
+      return sinoFiltered;
+      
+  }
+
+
+
+
   /**
    * Computes the Inverse Discrete Fourier Transform of the complex signal given
    * in parameters.<br/>
